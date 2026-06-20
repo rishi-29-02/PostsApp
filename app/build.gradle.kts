@@ -69,6 +69,9 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.logging.interceptor)
 
+    // Icons
+    implementation(libs.androidx.compose.material.icons.extended)
+
     // Test
     testImplementation(libs.junit)
 
