@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeEditorTabs">
+    <option name="activeSessionId" value="3ba5c2b7-e8f6-4076-96f7-4a747153daeb" />
+    <option name="openSessionIds">
+      <list>
+        <option value="5e707835-3ca0-427f-b633-01d480809721" />
+        <option value="3ba5c2b7-e8f6-4076-96f7-4a747153daeb" />
+      </list>
+    </option>
+    <option name="sessionPaths">
+      <map>
+        <entry key="3ba5c2b7-e8f6-4076-96f7-4a747153daeb" value="/switch-account" />
+      </map>
+    </option>
+    <option name="sessionTitles">
+      <map>
+        <entry key="3ba5c2b7-e8f6-4076-96f7-4a747153daeb" value="Claude Code" />
+      </map>
+    </option>
+  </component>
+</project>
