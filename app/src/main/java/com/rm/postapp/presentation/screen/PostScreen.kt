@@ -65,16 +65,17 @@ fun PostScreen(
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(vertical = 16.dp),
+                                        .padding(vertical = 8.dp),
                                 elevation = CardDefaults.cardElevation(10.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier.padding(16.dp)
-                                ) {
-                                    Text(
-                                        text = post.title
-                                    )
-                                }
+
+                                PostContent(
+                                    modifier = Modifier,
+                                    title = post.title,
+                                    content = post.body,
+                                    userID = post.userId,
+                                    postID = post.id
+                                )
                             }
                         }
                     }
