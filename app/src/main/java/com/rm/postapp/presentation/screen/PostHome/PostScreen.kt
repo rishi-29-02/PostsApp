@@ -1,6 +1,6 @@
-package com.rm.postapp.presentation.screen
+package com.rm.postapp.presentation.screen.PostHome
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,18 +32,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.rm.postapp.R
 import com.rm.postapp.presentation.components.UserProfileIcon
+import com.rm.postapp.presentation.navigation.PostDescriptionRoute
+import com.rm.postapp.presentation.screen.PostViewModel
 import com.rm.postapp.presentation.utils.UiState
 
 @Composable
 fun PostScreen(
-    viewModel: PostViewModel = hiltViewModel()
+    viewModel: PostViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val state by viewModel.postState.collectAsStateWithLifecycle()
 
@@ -74,7 +77,12 @@ fun PostScreen(
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(vertical = dimensionResource(R.dimen.padding_S)),
+                                        .padding(vertical = dimensionResource(R.dimen.padding_S))
+                                        .clickable {
+                                            navController.navigate(
+                                                PostDescriptionRoute(post.id)
+                                            )
+                                        },
                                 elevation = CardDefaults.cardElevation( dimensionResource(R.dimen.elevation_S))
                             ) {
 

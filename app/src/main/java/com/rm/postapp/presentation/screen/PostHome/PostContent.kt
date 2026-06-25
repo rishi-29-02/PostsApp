@@ -1,4 +1,4 @@
-package com.rm.postapp.presentation.screen
+package com.rm.postapp.presentation.screen.PostHome
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

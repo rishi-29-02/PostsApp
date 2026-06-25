@@ -1,0 +1,54 @@
+package com.rm.postapp.presentation.screen.postdescription
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.rm.postapp.domain.models.Post
+import com.rm.postapp.domain.repository.PostRepository
+import com.rm.postapp.presentation.navigation.PostDescriptionRoute
+import com.rm.postapp.presentation.utils.UiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+
+@HiltViewModel
+class PostDescriptionViewModel @Inject constructor(
+    private val repository: PostRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    val postId =
+        savedStateHandle.toRoute<PostDescriptionRoute>().postId
+    private val _postState =
+        MutableStateFlow<UiState<Post>>(UiState.Loading)
+
+    val postDescriptionState: StateFlow<UiState<Post>>
+        get() = _postState
+
+    init {
+        fetchPost(postId)
+    }
+
+    fun fetchPost(postId: Int) {
+
+        viewModelScope.launch {
+
+            _postState.value = UiState.Loading
+
+            try {
+
+                val post = repository.getPostById(postId)
+
+                _postState.value = UiState.Success(post)
+
+            } catch (e: Exception) {
+
+                _postState.value =
+                    UiState.Error(e.message ?: "Unknown Error")
+            }
+        }
+    }
+}

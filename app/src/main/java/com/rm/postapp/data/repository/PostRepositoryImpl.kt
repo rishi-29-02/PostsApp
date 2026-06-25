@@ -12,4 +12,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getPosts(): List<Post> {
         return postApi.getPosts().toDomain()
     }
+    override suspend fun getPostById(postId: Int): Post {
+        return postApi.getPostById(postId).toDomain()
+    }
 }
