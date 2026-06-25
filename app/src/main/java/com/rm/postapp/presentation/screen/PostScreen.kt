@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,13 +29,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.rm.postapp.R
+import com.rm.postapp.presentation.components.UserProfileIcon
 import com.rm.postapp.presentation.utils.UiState
 
 @Composable
@@ -54,7 +56,7 @@ fun PostScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding( dimensionResource(R.dimen.padding_M)),
             contentAlignment = Alignment.Center
         ) {
             when(state) {
@@ -72,8 +74,8 @@ fun PostScreen(
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(vertical = 8.dp),
-                                elevation = CardDefaults.cardElevation(10.dp)
+                                        .padding(vertical = dimensionResource(R.dimen.padding_S)),
+                                elevation = CardDefaults.cardElevation( dimensionResource(R.dimen.elevation_S))
                             ) {
 
                                 PostContent(
@@ -100,7 +102,7 @@ fun PostScreen(
 @Composable
 fun PostHeader(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.padding(horizontal = 10.dp)
+        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_S))
     ) {
         Row(
             modifier = Modifier,
@@ -113,7 +115,7 @@ fun PostHeader(modifier: Modifier = Modifier) {
                 contentDescription = "Post Icons"
             )
 
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_S)))
 
             Text(
                 text = "Posts",
@@ -128,26 +130,14 @@ fun PostHeader(modifier: Modifier = Modifier) {
 
                 }
             ) {
-                UserProfileIcon()
+                UserProfileIcon(modifier,"RM",Color.DarkGray,Color.LightGray)
             }
         }
 
-        PostSearch(modifier.padding(top = 4.dp))
+        PostSearch(modifier.padding(top = dimensionResource(R.dimen.padding_XS)))
     }
 }
 
-@Composable
-fun UserProfileIcon(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .size(50.dp)
-            .clip(CircleShape)
-            .background(Color.LightGray),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("RM", color = Color.DarkGray)
-    }
-}
 
 @Composable
 fun PostSearch(modifier: Modifier = Modifier) {
