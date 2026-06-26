@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.PostAdd
@@ -30,10 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.sp
-
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rm.postapp.R
@@ -46,12 +49,21 @@ fun PostScreen(
     onPostClick: (Int) -> Unit
 ) {
     val state by viewModel.postState.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .statusBarsPadding()
     ) {
-        PostHeader()
+        PostHeader(
+            Modifier,
+            searchQuery,
+            viewModel::onSearchTextQueryChange,
+            onImeAction = {
+                keyboardController?.hide()
+            }
+        )
 
         Box(
             modifier = Modifier
@@ -68,7 +80,9 @@ fun PostScreen(
                 }
                 is UiState.Success<*> -> {
                     val posts = (state as UiState.Success).data
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    ) {
                         items(posts) { post ->
                             Card(
                                 modifier =
@@ -103,7 +117,12 @@ fun PostScreen(
 }
 
 @Composable
-fun PostHeader(modifier: Modifier = Modifier) {
+fun PostHeader(
+    modifier: Modifier = Modifier,
+    searchQuery: String,
+    onSearchTextQueryChange: (String) -> Unit,
+    onImeAction: () -> Unit,
+) {
     Column(
         modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_S))
     ) {
@@ -137,19 +156,37 @@ fun PostHeader(modifier: Modifier = Modifier) {
             }
         }
 
-        PostSearch(modifier.padding(top = dimensionResource(R.dimen.padding_XS)))
+        PostSearch(
+            modifier.padding(top = dimensionResource(R.dimen.padding_XS)),
+            searchQuery,
+            onSearchTextQueryChange,
+            onImeAction,
+        )
     }
 }
 
 
 @Composable
-fun PostSearch(modifier: Modifier = Modifier) {
+fun PostSearch(
+    modifier: Modifier = Modifier,
+    searchQuery: String,
+    onSearchTextQueryChange: (String) -> Unit,
+    onImeAction: () -> Unit
+) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
-        value = "",
-        onValueChange = { },
+        value = searchQuery,
+        onValueChange = { onSearchTextQueryChange(it) },
         placeholder = { Text("Search Posts") },
         shape = CircleShape,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onImeAction()
+            }
+        ),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Search,
@@ -157,10 +194,18 @@ fun PostSearch(modifier: Modifier = Modifier) {
             )
         },
         trailingIcon = {
-            Icon(
-                imageVector = Icons.Default.Clear,
-                contentDescription = null
-            )
+            if (searchQuery.isNotEmpty()) {
+                IconButton(
+                    onClick = {
+                        onSearchTextQueryChange("")
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                    )
+                }
+            }
         }
     )
 }
