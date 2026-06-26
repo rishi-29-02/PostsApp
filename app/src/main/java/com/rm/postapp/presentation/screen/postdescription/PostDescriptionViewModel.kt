@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rm.postapp.domain.models.Post
 import com.rm.postapp.domain.repository.PostRepository
-import com.rm.postapp.presentation.navigation.PostDescriptionRoute
+import com.rm.postapp.presentation.navigation.NavRoutes
 import com.rm.postapp.presentation.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -21,7 +21,7 @@ class PostDescriptionViewModel @Inject constructor(
 ) : ViewModel() {
 
     val postId =
-        savedStateHandle.toRoute<PostDescriptionRoute>().postId
+        savedStateHandle.toRoute<NavRoutes.PostDescriptionScreen>().postId
     private val _postState =
         MutableStateFlow<UiState<Post>>(UiState.Loading)
 

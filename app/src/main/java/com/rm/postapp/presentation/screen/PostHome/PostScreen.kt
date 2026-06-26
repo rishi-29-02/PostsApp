@@ -36,17 +36,14 @@ import androidx.compose.ui.unit.sp
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.rm.postapp.R
 import com.rm.postapp.presentation.components.UserProfileIcon
-import com.rm.postapp.presentation.navigation.PostDescriptionRoute
-import com.rm.postapp.presentation.screen.PostViewModel
 import com.rm.postapp.presentation.utils.UiState
 
 @Composable
 fun PostScreen(
     viewModel: PostViewModel = hiltViewModel(),
-    navController: NavController
+    onPostClick: (Int) -> Unit
 ) {
     val state by viewModel.postState.collectAsStateWithLifecycle()
 
@@ -79,9 +76,7 @@ fun PostScreen(
                                         .fillMaxSize()
                                         .padding(vertical = dimensionResource(R.dimen.padding_S))
                                         .clickable {
-                                            navController.navigate(
-                                                PostDescriptionRoute(post.id)
-                                            )
+                                            onPostClick(post.id)
                                         },
                                 elevation = CardDefaults.cardElevation( dimensionResource(R.dimen.elevation_S))
                             ) {

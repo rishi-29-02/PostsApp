@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.rm.postapp.presentation.components.IconText
 import com.rm.postapp.presentation.components.UserProfileIcon
 import com.rm.postapp.presentation.utils.UiState
 
@@ -53,6 +54,7 @@ If the composable recomposes unexpectedly, you need to ensure the effect doesn't
 The ViewModel lifecycle isn't fully in control.
     }*/
     val state by viewModel.postDescriptionState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             PostDescriptionHeader(
@@ -155,41 +157,28 @@ fun PostDescriptionHeader(
 
 @Composable
 fun PostFooter() {
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-        Icon(
-            imageVector = Icons.Outlined.FavoriteBorder,
-            contentDescription = null
+        IconText(
+            icon = Icons.Outlined.FavoriteBorder,
+            text = 24.toString()
         )
-
-        Spacer(Modifier.width(6.dp))
-
-        Text("24")
 
         Spacer(Modifier.width(24.dp))
 
-        Icon(
-            imageVector = Icons.AutoMirrored.Outlined.Chat,
-            contentDescription = null
+        IconText(
+            icon = Icons.AutoMirrored.Outlined.Chat,
+            text =  8.toString()
         )
-
-        Spacer(Modifier.width(6.dp))
-
-        Text("8")
 
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(
             onClick = { }
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Share,
-                contentDescription = "Share"
-            )
+            IconText(icon =  Icons.Outlined.Share)
         }
     }
 }
@@ -198,7 +187,6 @@ fun PostFooter() {
 fun AuthorSection(
     userId: Int
 ) {
-
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -1,4 +1,4 @@
-package com.rm.postapp.presentation.screen
+package com.rm.postapp.presentation.screen.PostHome
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
