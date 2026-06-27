@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.rm.postapp.presentation.screen.PostScreen
+import androidx.navigation.compose.rememberNavController
+import com.rm.postapp.presentation.navigation.AppNavGraph
+import com.rm.postapp.presentation.screen.PostHome.PostScreen
 import com.rm.postapp.ui.theme.PostAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,8 +16,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
             PostAppTheme {
-                PostScreen()
+                AppNavGraph(navController)
             }
         }
     }

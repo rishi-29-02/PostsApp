@@ -54,6 +54,7 @@ dependencies {
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.material3)
 
     // Navigation
     implementation(libs.navigation.compose)
