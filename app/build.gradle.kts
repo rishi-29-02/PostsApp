@@ -40,6 +40,14 @@ android {
 }
 
 dependencies {
+    // Room Runtime
+    implementation(libs.androidx.room.runtime)
+
+    // Kotlin Coroutines + Flow support
+    implementation(libs.androidx.room.ktx)
+
+    // Room Compiler (KSP)
+    ksp(libs.androidx.room.compiler)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
