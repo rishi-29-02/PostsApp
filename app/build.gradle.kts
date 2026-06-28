@@ -73,6 +73,9 @@ dependencies {
     // Icons
     implementation(libs.androidx.compose.material.icons.extended)
 
+    // Lottie
+    implementation(libs.lottie.compose)
+
     // Test
     testImplementation(libs.junit)
 
