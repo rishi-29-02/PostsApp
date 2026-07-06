@@ -1,4 +1,4 @@
-package com.rm.postapp.presentation.screen.PostHome
+package com.rm.postapp.presentation.screen.postHome
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,13 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.PostAdd
@@ -26,9 +28,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,93 +67,131 @@ fun PostScreen(
 ) {
     val state by viewModel.postState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val errorMessage = state.errorMessage
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    Column(
-        modifier = Modifier
-            .statusBarsPadding()
-    ) {
-        PostHeader(
-            Modifier,
-            state.searchQuery,
-            viewModel::onSearchTextQueryChange,
-            onImeAction = {
-                keyboardController?.hide()
+    LaunchedEffect(errorMessage) {
+        if (errorMessage != null) {
+            snackBarHostState.showSnackbar(message = errorMessage)
+            viewModel.dismissError()
+        }
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = Color.White,
+                    contentColor = Color.Black,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.padding_M))
+                )
             }
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_M)),
-            contentAlignment = Alignment.Center
+        }
+    ) { paddingValues ->
+        PullToRefreshBox(
+            modifier = Modifier.padding(paddingValues),
+            isRefreshing = state.isRefreshing,
+            onRefresh = {
+                viewModel.onSearchTextQueryChange("")
+                keyboardController?.hide()
+                viewModel.getPosts(true)
+            }
         ) {
-            when(val postState = state.postState) {
-                UiState.Loading -> {
-                    showLottie(
-                        Modifier
-                            .align(Alignment.Center),
-                        "loading.json",
-                        100
-                    )
+        Column {
+            PostHeader(
+                Modifier,
+                state.searchQuery,
+                viewModel::onSearchTextQueryChange,
+                onImeAction = {
+                    keyboardController?.hide()
                 }
+            )
 
-                is UiState.Success<List<Post>> -> {
-                    val posts = postState.data
-
-                    if (posts.isEmpty()) {
-                        Column(
-                            modifier = Modifier
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(R.dimen.padding_M)),
+                contentAlignment = Alignment.Center
+            ) {
+                when(val postState = state.postState) {
+                    UiState.Loading -> {
+                        ShowLottie(
+                            Modifier
                                 .align(Alignment.Center)
-                        ) {
-                            showLottie(
-                                lottieName = "empty.json",
-                                size = 150
-                            )
+                                .verticalScroll(rememberScrollState()),
+                            "loading.json",
+                            100
+                        )
+                    }
 
-                            Spacer(Modifier.width(dimensionResource(R.dimen.spacer_width)))
+                    is UiState.Success<List<Post>> -> {
+                        val posts = postState.data
 
-                            Text(
-                                text = stringResource(R.string.no_posts)
-                            )
-                        }
+                        if (posts.isEmpty()) {
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                ShowLottie(
+                                    lottieName = "empty.json",
+                                    size = 150
+                                )
 
-                        keyboardController?.hide()
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.align(Alignment.TopCenter)
-                        ) {
-                            items(posts) { post ->
-                                Card(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxSize()
-                                            .padding(vertical = dimensionResource(R.dimen.padding_S))
-                                            .clickable {
-                                                onPostClick(post.id)
-                                            },
-                                    elevation = CardDefaults.cardElevation( dimensionResource(R.dimen.elevation_S))
-                                ) {
+                                Spacer(Modifier.width(dimensionResource(R.dimen.spacer_width)))
 
-                                    PostContent(
-                                        modifier = Modifier,
-                                        title = post.title,
-                                        content = post.body,
-                                        userID = post.userId,
-                                        postID = post.id
-                                    )
+                                Text(
+                                    text = stringResource(R.string.no_posts)
+                                )
+                            }
+
+                            keyboardController?.hide()
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.align(Alignment.TopCenter)
+                            ) {
+                                items(posts) { post ->
+                                    Card(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxSize()
+                                                .padding(vertical = dimensionResource(R.dimen.padding_S))
+                                                .clickable {
+                                                    onPostClick(post.id)
+                                                },
+                                        elevation = CardDefaults.cardElevation( dimensionResource(R.dimen.elevation_S))
+                                    ) {
+                                        PostContent(
+                                            modifier = Modifier,
+                                            title = post.title,
+                                            content = post.body,
+                                            userID = post.userId,
+                                            postID = post.id
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                is UiState.Error -> {
-                    Text(
-                        text = postState.message
-                    )
+                    is UiState.Error -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            ShowLottie(
+                                lottieName = "empty.json",
+                                size = 150
+                            )
+                        }
+                    }
                 }
             }
         }
+    }
     }
 }
 
@@ -243,7 +290,7 @@ fun PostSearch(
 }
 
 @Composable
-fun showLottie(modifier: Modifier = Modifier, lottieName: String, size: Int) {
+fun ShowLottie(modifier: Modifier = Modifier, lottieName: String, size: Int) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.Asset(lottieName)
     )

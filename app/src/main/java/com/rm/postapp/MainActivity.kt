@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.rm.postapp.presentation.navigation.AppNavGraph
-import com.rm.postapp.presentation.screen.PostHome.PostScreen
 import com.rm.postapp.ui.theme.PostAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
