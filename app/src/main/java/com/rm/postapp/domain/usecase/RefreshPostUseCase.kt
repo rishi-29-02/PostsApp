@@ -1,12 +1,17 @@
 package com.rm.postapp.domain.usecase
 
-import com.rm.postapp.domain.repository.PostRepository
+import com.rm.postapp.domain.utils.NetworkMonitor
+import com.rm.postapp.utils.NoInternetException
 import javax.inject.Inject
 
 class RefreshPostUseCase @Inject constructor(
-    private val postRepository: PostRepository
+    private val networkMonitor: NetworkMonitor
 )  {
-    suspend operator fun invoke() {
-        return postRepository.refreshPosts()
+    operator fun invoke() : Result<Unit> {
+        return if (networkMonitor.isConnected()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(NoInternetException())
+        }
     }
 }

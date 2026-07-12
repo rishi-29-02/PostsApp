@@ -3,16 +3,15 @@ package com.rm.postapp.data.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
 
-    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @Insert(onConflict = androidx.room.OnConflictStrategy.IGNORE)
     suspend fun insertPost(postEntity: List<PostEntity>)
 
     @Query("SELECT * FROM post")
-    fun getAllPost(): Flow<List<PostEntity>>
+    suspend fun getAllPost(): List<PostEntity>
 
     @Query("SELECT * FROM post WHERE id = :postId")
     suspend fun getPostID(postId:Int): PostEntity

@@ -68,22 +68,26 @@ fun PostScreen(
     val state by viewModel.postState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val errorMessage = state.errorMessage
-    val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     LaunchedEffect(errorMessage) {
         if (errorMessage != null) {
-            snackBarHostState.showSnackbar(message = errorMessage)
+            snackBarHostState.showSnackbar(errorMessage)
             viewModel.dismissError()
         }
     }
 
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState) { data ->
+            SnackbarHost(
+                hostState = snackBarHostState
+            ) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = Color.White,
                     contentColor = Color.Black,
+                    containerColor = Color.White,
                     shape = RoundedCornerShape(dimensionResource(R.dimen.padding_M))
                 )
             }
@@ -95,103 +99,111 @@ fun PostScreen(
             onRefresh = {
                 viewModel.onSearchTextQueryChange("")
                 keyboardController?.hide()
-                viewModel.getPosts(true)
+                viewModel.refreshPosts()
             }
         ) {
-        Column {
-            PostHeader(
-                Modifier,
-                state.searchQuery,
-                viewModel::onSearchTextQueryChange,
-                onImeAction = {
-                    keyboardController?.hide()
-                }
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(dimensionResource(R.dimen.padding_M)),
-                contentAlignment = Alignment.Center
-            ) {
-                when(val postState = state.postState) {
-                    UiState.Loading -> {
-                        ShowLottie(
-                            Modifier
-                                .align(Alignment.Center)
-                                .verticalScroll(rememberScrollState()),
-                            "loading.json",
-                            100
-                        )
+            Column {
+                PostHeader(
+                    Modifier,
+                    state.searchQuery,
+                    viewModel::onSearchTextQueryChange,
+                    onImeAction = {
+                        keyboardController?.hide()
                     }
+                )
 
-                    is UiState.Success<List<Post>> -> {
-                        val posts = postState.data
-
-                        if (posts.isEmpty()) {
-                            Column(
-                                modifier = Modifier
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(R.dimen.padding_M)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when (val postState = state.postState) {
+                        UiState.Loading -> {
+                            ShowLottie(
+                                Modifier
                                     .align(Alignment.Center)
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                ShowLottie(
-                                    lottieName = "empty.json",
-                                    size = 150
-                                )
+                                    .verticalScroll(rememberScrollState()),
+                                "loading.json",
+                                100
+                            )
+                        }
 
-                                Spacer(Modifier.width(dimensionResource(R.dimen.spacer_width)))
+                        is UiState.Success<List<Post>> -> {
+                            val posts = postState.data
 
-                                Text(
-                                    text = stringResource(R.string.no_posts)
-                                )
-                            }
+                            if (posts.isEmpty()) {
+                                Column(
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .verticalScroll(rememberScrollState())
+                                ) {
+                                    ShowLottie(
+                                        lottieName = "empty.json",
+                                        size = 150
+                                    )
 
-                            keyboardController?.hide()
-                        } else {
-                            LazyColumn(
-                                modifier = Modifier.align(Alignment.TopCenter)
-                            ) {
-                                items(posts) { post ->
-                                    Card(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxSize()
-                                                .padding(vertical = dimensionResource(R.dimen.padding_S))
-                                                .clickable {
-                                                    onPostClick(post.id)
-                                                },
-                                        elevation = CardDefaults.cardElevation( dimensionResource(R.dimen.elevation_S))
-                                    ) {
-                                        PostContent(
-                                            modifier = Modifier,
-                                            title = post.title,
-                                            content = post.body,
-                                            userID = post.userId,
-                                            postID = post.id
-                                        )
+                                    Spacer(Modifier.width(dimensionResource(R.dimen.spacer_width)))
+
+                                    Text(
+                                        text = stringResource(R.string.no_posts)
+                                    )
+                                }
+
+                                keyboardController?.hide()
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.align(Alignment.TopCenter)
+                                ) {
+                                    items(posts) { post ->
+                                        Card(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxSize()
+                                                    .padding(vertical = dimensionResource(R.dimen.padding_S))
+                                                    .clickable {
+                                                        onPostClick(post.id)
+                                                    },
+                                            elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.elevation_S))
+                                        ) {
+                                            PostContent(
+                                                modifier = Modifier,
+                                                title = post.title,
+                                                content = post.body,
+                                                userID = post.userId,
+                                                postID = post.id
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    is UiState.Error -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState()),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            ShowLottie(
-                                lottieName = "empty.json",
-                                size = 150
-                            )
+                        is UiState.Error -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState()),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column {
+                                    ShowLottie(
+                                        lottieName = "empty.json",
+                                        size = 150
+                                    )
+
+                                    Spacer(modifier = Modifier.size(dimensionResource(R.dimen.spacer_width)))
+
+                                    Text(
+                                        text = postState.message
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-    }
     }
 }
 

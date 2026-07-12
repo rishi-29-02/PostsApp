@@ -27,4 +27,4 @@ fun PostEntity.toDomain() = Post(
     body = body
 )
 
-fun List<PostDto>.toDomain(): List<Post> = map { it.toDomain() }
+fun List<PostEntity>.toDomain(): List<Post> = map { it.toDomain() }
