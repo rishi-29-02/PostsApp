@@ -5,4 +5,5 @@ import com.rm.postapp.domain.models.Post
 interface PostRepository {
     suspend fun getPosts(): List<Post>
     suspend fun getPostById(postId: Int): Post
+
 }

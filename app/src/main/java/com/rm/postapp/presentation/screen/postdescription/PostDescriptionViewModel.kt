@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rm.postapp.domain.models.Post
 import com.rm.postapp.domain.repository.PostRepository
+import com.rm.postapp.domain.usecase.GetPostByIDUseCase
 import com.rm.postapp.presentation.navigation.NavRoutes
 import com.rm.postapp.presentation.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class PostDescriptionViewModel @Inject constructor(
-    private val repository: PostRepository,
+    private val getPostByIDUseCase: GetPostByIDUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,9 +41,7 @@ class PostDescriptionViewModel @Inject constructor(
 
             try {
 
-                val post = repository.getPostById(postId)
-
-                _postState.value = UiState.Success(post)
+                _postState.value = UiState.Success(getPostByIDUseCase(postId))
 
             } catch (e: Exception) {
 
