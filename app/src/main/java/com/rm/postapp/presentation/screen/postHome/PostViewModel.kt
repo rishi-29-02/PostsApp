@@ -3,8 +3,8 @@ package com.rm.postapp.presentation.screen.postHome
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rm.postapp.domain.models.Post
+import com.rm.postapp.domain.usecase.CheckInternetConnectionUseCase
 import com.rm.postapp.domain.usecase.GetAllPostUseCase
-import com.rm.postapp.domain.usecase.RefreshPostUseCase
 import com.rm.postapp.presentation.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val getAllPostUseCase: GetAllPostUseCase,
-    private val refreshPostUseCase: RefreshPostUseCase
+    private val checkInternetConnectionUseCase : CheckInternetConnectionUseCase
 ) : ViewModel() {
 
     private var _postState = MutableStateFlow(PostUiState())
@@ -62,7 +62,7 @@ class PostViewModel @Inject constructor(
             }
 
             withContext(Dispatchers.IO) {
-                refreshPostUseCase()
+                checkInternetConnectionUseCase()
                     .onSuccess {
                         _postState.update {
                             it.copy(isRefreshing = false)
