@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rm.postapp.presentation.screen.postHome.PostScreen
 import com.rm.postapp.presentation.screen.postdescription.PostDescriptionScreen
+import com.rm.postapp.presentation.screen.profile.ProfileScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -15,18 +16,31 @@ fun AppNavGraph(navController: NavHostController) {
     ) {
 
         composable<NavRoutes.PostScreen> {
-            PostScreen { postId ->
+            PostScreen(
+                onPostClick = { postId ->
                 navController.navigate(
                     NavRoutes.PostDescriptionScreen(postId = postId)
                 )
-            }
+            },
+                onProfileIconClick = {
+                    navController.navigate(
+                        NavRoutes.ProfileScreen
+                    )
+                }
+            )
         }
 
         composable<NavRoutes.PostDescriptionScreen> {
             PostDescriptionScreen(navController = navController)
         }
 
-
+        composable<NavRoutes.ProfileScreen> {
+            ProfileScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 
 }

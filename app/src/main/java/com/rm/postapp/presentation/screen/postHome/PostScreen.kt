@@ -63,7 +63,8 @@ import com.rm.postapp.presentation.utils.UiState
 @Composable
 fun PostScreen(
     viewModel: PostViewModel = hiltViewModel(),
-    onPostClick: (Int) -> Unit
+    onPostClick: (Int) -> Unit,
+    onProfileIconClick: () -> Unit
 ) {
     val state by viewModel.postState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -109,7 +110,8 @@ fun PostScreen(
                     viewModel::onSearchTextQueryChange,
                     onImeAction = {
                         keyboardController?.hide()
-                    }
+                    },
+                    onProfileIconClick,
                 )
 
                 Box(
@@ -213,6 +215,7 @@ fun PostHeader(
     searchQuery: String,
     onSearchTextQueryChange: (String) -> Unit,
     onImeAction: () -> Unit,
+    onProfileIconClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_S))
@@ -240,7 +243,7 @@ fun PostHeader(
 
             IconButton(
                 onClick = {
-
+                    onProfileIconClick()
                 }
             ) {
                 UserProfileIcon(modifier,"RM",Color.DarkGray,Color.LightGray)

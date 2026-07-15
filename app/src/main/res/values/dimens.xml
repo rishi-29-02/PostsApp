@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="user_profile_icon_size">40dp</dimen>
+    <dimen name="very_large_dp">100dp</dimen>
     <dimen name="spacer_width">10dp</dimen>
 
 

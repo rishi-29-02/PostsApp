@@ -9,4 +9,7 @@ sealed interface NavRoutes {
 
     @Serializable
     data class PostDescriptionScreen(val postId: Int)
+
+    @Serializable
+    data object ProfileScreen
 }
