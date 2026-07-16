@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,13 +36,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rm.postapp.R
 
 @Composable
 @Preview(showBackground = true)
 fun ProfileScreen(
+    viewModel: ProfileViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {}
 ) {
+
+    val versionName by viewModel.versionName.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier.fillMaxSize().statusBarsPadding()
     ) {
@@ -137,7 +144,7 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_M)),
             contentAlignment = Alignment.BottomCenter
         ) {
-            Text("Version : 1.0.1")
+            Text("Version :$versionName")
         }
     }
 }
@@ -187,8 +194,6 @@ fun Detail(
             Text(
                 title,
             )
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_S)))
 
             Text(
                 text = value,
