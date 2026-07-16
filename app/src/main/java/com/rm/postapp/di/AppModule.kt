@@ -2,8 +2,10 @@ package com.rm.postapp.di
 
 import com.rm.postapp.data.repository.PostRepositoryImpl
 import com.rm.postapp.data.utils.AppInfoProviderImpl
+import com.rm.postapp.data.repository.PostShareManagerImpl
 import com.rm.postapp.data.utils.NetworkMonitorImpl
 import com.rm.postapp.domain.repository.PostRepository
+import com.rm.postapp.domain.repository.PostShareManager
 import com.rm.postapp.domain.utils.AppInfoProvider
 import com.rm.postapp.domain.utils.NetworkMonitor
 import dagger.Binds
@@ -27,4 +29,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindAppInfoProvider(appInfoProviderImpl: AppInfoProviderImpl): AppInfoProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindPostShareManager(postShareManagerImpl: PostShareManagerImpl): PostShareManager
 }

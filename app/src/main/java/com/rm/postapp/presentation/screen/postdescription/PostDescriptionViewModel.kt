@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rm.postapp.domain.models.Post
 import com.rm.postapp.domain.repository.PostRepository
+import com.rm.postapp.domain.repository.PostShareManager
 import com.rm.postapp.domain.usecase.GetPostByIDUseCase
 import com.rm.postapp.presentation.navigation.NavRoutes
 import com.rm.postapp.presentation.utils.UiState
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class PostDescriptionViewModel @Inject constructor(
     private val getPostByIDUseCase: GetPostByIDUseCase,
-    savedStateHandle: SavedStateHandle
+    private val postShareManager: PostShareManager,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     val postId =
@@ -48,6 +50,12 @@ class PostDescriptionViewModel @Inject constructor(
                 _postState.value =
                     UiState.Error(e.message ?: "Unknown Error")
             }
+        }
+    }
+
+    fun sharePost() {
+        if (postDescriptionState.value is UiState.Success) {
+            postShareManager.sharePost((postDescriptionState.value as UiState.Success).data)
         }
     }
 }

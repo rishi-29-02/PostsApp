@@ -109,7 +109,11 @@ The ViewModel lifecycle isn't fully in control.
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        PostFooter()
+                        PostFooter(
+                            onShareContentClicked = {
+                                viewModel.sharePost()
+                            }
+                        )
                     }
                 }
 
@@ -156,7 +160,9 @@ fun PostDescriptionHeader(
 }
 
 @Composable
-fun PostFooter() {
+fun PostFooter(
+    onShareContentClicked: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -176,7 +182,9 @@ fun PostFooter() {
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(
-            onClick = { }
+            onClick = {
+                onShareContentClicked()
+            }
         ) {
             IconText(icon =  Icons.Outlined.Share)
         }
