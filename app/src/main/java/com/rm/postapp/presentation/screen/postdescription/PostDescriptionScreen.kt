@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Chat
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Card
@@ -19,12 +21,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,10 +42,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.rm.postapp.presentation.components.IconText
+import com.rm.postapp.presentation.components.IconTextButton
 import com.rm.postapp.presentation.components.UserProfileIcon
 import com.rm.postapp.presentation.utils.UiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostDescriptionScreen(
     modifier: Modifier = Modifier,
@@ -54,6 +63,9 @@ If the composable recomposes unexpectedly, you need to ensure the effect doesn't
 The ViewModel lifecycle isn't fully in control.
     }*/
     val state by viewModel.postDescriptionState.collectAsStateWithLifecycle()
+    var showComments by remember { mutableStateOf(false) }
+    var isLiked by remember { mutableStateOf(false) }
+    var likeCount by remember { mutableIntStateOf(24) }
 
     Scaffold(
         topBar = {
@@ -112,7 +124,16 @@ The ViewModel lifecycle isn't fully in control.
                         PostFooter(
                             onShareContentClicked = {
                                 viewModel.sharePost()
-                            }
+                            },
+                            isLiked = isLiked,
+                            likeCount = likeCount,
+                            onLikeClick = {
+                                likeCount += if (isLiked) -1 else 1
+                                isLiked = !isLiked
+                            },
+                            onCommentClick = {
+                                showComments = true
+                            },
                         )
                     }
                 }
@@ -127,6 +148,15 @@ The ViewModel lifecycle isn't fully in control.
         }
 
 
+    }
+    if (showComments) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showComments = false
+            }
+        ) {
+            CommentBottomSheet()
+        }
     }
 
 }
@@ -161,33 +191,42 @@ fun PostDescriptionHeader(
 
 @Composable
 fun PostFooter(
-    onShareContentClicked: () -> Unit
+    onShareContentClicked: () -> Unit,
+    isLiked: Boolean,
+    likeCount: Int,
+    onLikeClick: () -> Unit,
+    onCommentClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconText(
-            icon = Icons.Outlined.FavoriteBorder,
-            text = 24.toString()
+
+        IconTextButton(
+            icon = if (isLiked)
+                Icons.Filled.Favorite
+            else
+                Icons.Outlined.FavoriteBorder,
+            text = likeCount.toString(),
+            tint = if (isLiked) Color.Red else LocalContentColor.current,
+            onClick = onLikeClick
         )
+
 
         Spacer(Modifier.width(24.dp))
 
-        IconText(
+        IconTextButton(
             icon = Icons.AutoMirrored.Outlined.Chat,
-            text =  8.toString()
+            text = "8",
+            onClick = onCommentClick
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(
-            onClick = {
-                onShareContentClicked()
-            }
-        ) {
-            IconText(icon =  Icons.Outlined.Share)
-        }
+        IconTextButton(
+            icon = Icons.Outlined.Share,
+            onClick = onShareContentClicked
+        )
     }
 }
 
@@ -224,3 +263,44 @@ fun AuthorSection(
         }
     }
 }
+
+    @Composable
+    fun CommentBottomSheet() {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+
+            Text(
+                text = "Comments (8)",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            LazyColumn {
+
+                items(8) { index ->
+
+                    Column(
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    ) {
+
+                        Text(
+                            text = "User ${index + 1}",
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Text(
+                            text = "This is a sample comment."
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
