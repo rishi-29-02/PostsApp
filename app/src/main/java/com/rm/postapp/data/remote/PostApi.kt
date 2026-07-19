@@ -1,5 +1,6 @@
 package com.rm.postapp.data.remote
 
+import com.rm.postapp.data.remote.dto.CommentDto
 import com.rm.postapp.data.remote.dto.PostDto
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
@@ -14,4 +15,9 @@ interface PostApi {
     suspend fun getPostById(
         @Path("id") postId: Int
     ): PostDto
+
+    @GET("posts/{postId}/comments")
+    suspend fun getPostComments(
+        @Path("postId") postId: Int
+    ): List<CommentDto>
 }

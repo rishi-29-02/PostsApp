@@ -1,9 +1,11 @@
 package com.rm.postapp.di
 
+import com.rm.postapp.data.repository.CommentRepositoryImpl
 import com.rm.postapp.data.repository.PostRepositoryImpl
 import com.rm.postapp.data.utils.AppInfoProviderImpl
 import com.rm.postapp.data.repository.PostShareManagerImpl
 import com.rm.postapp.data.utils.NetworkMonitorImpl
+import com.rm.postapp.domain.repository.CommentRepository
 import com.rm.postapp.domain.repository.PostRepository
 import com.rm.postapp.domain.repository.PostShareManager
 import com.rm.postapp.domain.utils.AppInfoProvider
@@ -33,4 +35,9 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindPostShareManager(postShareManagerImpl: PostShareManagerImpl): PostShareManager
+    @Binds
+    @Singleton
+    abstract fun bindCommentRepository(
+        impl: CommentRepositoryImpl
+    ): CommentRepository
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Chat
@@ -51,7 +50,9 @@ import com.rm.postapp.presentation.utils.UiState
 fun PostDescriptionScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: PostDescriptionViewModel = hiltViewModel()
+    viewModel: PostDescriptionViewModel = hiltViewModel(),
+    commentViewModel : PostCommentViewModel = hiltViewModel()
+
 ) {
     /*
     LaunchedEffect(postId) {
@@ -63,6 +64,7 @@ If the composable recomposes unexpectedly, you need to ensure the effect doesn't
 The ViewModel lifecycle isn't fully in control.
     }*/
     val state by viewModel.postDescriptionState.collectAsStateWithLifecycle()
+    val comment by commentViewModel.comments.collectAsStateWithLifecycle()
     var showComments by remember { mutableStateOf(false) }
     var isLiked by remember { mutableStateOf(false) }
     var likeCount by remember { mutableIntStateOf(24) }
@@ -127,6 +129,7 @@ The ViewModel lifecycle isn't fully in control.
                             },
                             isLiked = isLiked,
                             likeCount = likeCount,
+                            commentCount = comment.size,
                             onLikeClick = {
                                 likeCount += if (isLiked) -1 else 1
                                 isLiked = !isLiked
@@ -155,7 +158,12 @@ The ViewModel lifecycle isn't fully in control.
                 showComments = false
             }
         ) {
-            CommentBottomSheet()
+            CommentBottomSheet(
+                comments = comment,
+                onDismiss = {
+                    showComments = false
+                }
+            )
         }
     }
 
@@ -194,6 +202,7 @@ fun PostFooter(
     onShareContentClicked: () -> Unit,
     isLiked: Boolean,
     likeCount: Int,
+    commentCount: Int,
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit
 ) {
@@ -217,7 +226,7 @@ fun PostFooter(
 
         IconTextButton(
             icon = Icons.AutoMirrored.Outlined.Chat,
-            text = "8",
+            text = commentCount.toString(),
             onClick = onCommentClick
         )
 
@@ -263,44 +272,3 @@ fun AuthorSection(
         }
     }
 }
-
-    @Composable
-    fun CommentBottomSheet() {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-
-            Text(
-                text = "Comments (8)",
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            LazyColumn {
-
-                items(8) { index ->
-
-                    Column(
-                        modifier = Modifier.padding(vertical = 12.dp)
-                    ) {
-
-                        Text(
-                            text = "User ${index + 1}",
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Text(
-                            text = "This is a sample comment."
-                        )
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(top = 12.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
