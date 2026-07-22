@@ -12,4 +12,7 @@ sealed interface NavRoutes {
 
     @Serializable
     data object ProfileScreen
+
+    @Serializable
+    data object LoginScreen
 }
