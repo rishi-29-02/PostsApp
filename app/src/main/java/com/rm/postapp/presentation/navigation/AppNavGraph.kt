@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.rm.postapp.presentation.screen.login.LoginScreen
 import com.rm.postapp.presentation.screen.postHome.PostScreen
 import com.rm.postapp.presentation.screen.postdescription.PostDescriptionScreen
 import com.rm.postapp.presentation.screen.profile.ProfileScreen
@@ -12,7 +13,7 @@ import com.rm.postapp.presentation.screen.profile.ProfileScreen
 fun AppNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.PostScreen
+        startDestination = NavRoutes.LoginScreen
     ) {
 
         composable<NavRoutes.PostScreen> {
@@ -40,6 +41,14 @@ fun AppNavGraph(navController: NavHostController) {
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable<NavRoutes.LoginScreen> {
+            LoginScreen() {
+                navController.navigate(
+                    NavRoutes.PostScreen
+                )
+            }
         }
     }
 }

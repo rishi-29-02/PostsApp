@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.ui.text)
     // Room Runtime
     implementation(libs.androidx.room.runtime)
 
